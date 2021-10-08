@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<error-handler name="error-handling" doc:id="9a854077-a206-4566-b40f-7156f98ec093" >
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="a6142263-50ed-46e4-97d0-909038fe9aa2" type="HTTP:BAD_GATEWAY" >
+			<ee:transform doc:name="Transform Message" doc:id="f21f1009-ca02-41a0-9e8d-e4fea9ee78ac" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+errorCode: error.Messagecode,
+errorType:error.errorType,
+errorDescription:error.description,
+correlationId:correlationId
+}]]></ee:set-payload>
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="400" ><![CDATA[400]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+		</on-error-propagate>
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="aec8cde4-dac6-4060-9f3e-711ebadd152f" type=" HTTP:CONNECTIVITY" >
+			<ee:transform doc:name="Transform Message" doc:id="20230fba-fc66-475a-8648-ea4c2d24f953" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+errorCode: error.Messagecode,
+errorType:error.errorType,
+errorDescription:error.description,
+correlationId:correlationId
+}]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+		</on-error-propagate>
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="4949d527-c8c7-4870-aef8-4e22411b253d" type=" HTTP:METHOD_NOT_ALLOWED" >
+			<ee:transform doc:name="Transform Message" doc:id="5765d52d-f301-4ea9-82f0-ddc52aa40248" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+errorCode: error.Messagecode,
+errorType:error.errorType,
+errorDescription:error.description,
+correlationId:correlationId
+}]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+		</on-error-propagate>
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="57812290-e5de-4657-a2e5-1caba9dbf6c5" type="HTTP:INTERNAL_SERVER_ERROR" >
+			<ee:transform doc:name="Transform Message" doc:id="652032d8-5678-4268-b582-248c9c14fac5" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+errorCode: error.Messagecode,
+errorType:error.errorType,
+errorDescription:error.description,
+correlationId:correlationId
+}]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+		</on-error-propagate>
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="dfaa349a-7c3a-4a18-bd32-75be00b5a5ce" type=" HTTP:UNAUTHORIZED" >
+			<ee:transform doc:name="Transform Message" doc:id="d6f0ed5f-9786-455f-9424-4c841ffb01c1" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+errorCode: error.Messagecode,
+errorType:error.errorType,
+errorDescription:error.description,
+correlationId:correlationId
+}]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+		</on-error-propagate>
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="93d44686-64c1-4e1e-bfc1-a8ee6979cf5d" type="ANY" >
+			<ee:transform doc:name="Transform Message" doc:id="05a0e1e3-4d33-4b22-ab30-87c7eeb98eb3" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+errorCode: error.Messagecode,
+errorType:error.errorType,
+errorDescription:error.description,
+correlationId:correlationId
+}]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+		</on-error-propagate>
+	</error-handler>
+</mule>

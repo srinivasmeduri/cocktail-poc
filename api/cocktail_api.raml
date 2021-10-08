@@ -1,0 +1,35 @@
+#%RAML 1.0
+title: cocktail_api
+traits: 
+ error_response: !include examples/codes.raml
+ Access: !include examples/trait.raml
+/ingredients:
+  get:
+    is: [Access, error_response]
+    queryParameters:
+      ingredient:
+        type: array
+        required: true
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/success/200.json
+/firstletter:
+  get:
+    is: [Access, error_response]
+    queryParameters:
+      f:
+        type: string
+        required: true
+      ingredient:
+        type: array
+        required: true
+    responses:
+      200:
+        body:
+          application/json:
+            example: !include examples/success/200.json          
+  
+  
+                                      

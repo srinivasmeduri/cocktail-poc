@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="cocktailfilterFlow" doc:id="6968d845-bc5f-4b8c-9586-20b743700604" >
+		<ee:transform doc:name="Create variables" doc:id="8aff5f3f-3747-4800-9c3e-f28525bc58e8" >
+			<ee:message />
+			<ee:variables >
+				<ee:set-variable variableName="i" ><![CDATA[%dw 2.0
+output application/json
+---
+attributes.queryParams.ingredient]]></ee:set-variable>
+				<ee:set-variable variableName="array1" ><![CDATA[%dw 2.0
+output application/json
+---
+[]]]></ee:set-variable>
+				<ee:set-variable variableName="ing1" ><![CDATA[%dw 2.0
+output application/json
+---
+(attributes.queryParams.ingredient splitBy ",")[0]]]></ee:set-variable>
+				<ee:set-variable variableName="ing2" ><![CDATA[%dw 2.0
+output application/java
+---
+(attributes.queryParams.ingredient splitBy ",")[1]]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<ee:transform doc:name="Input payload" doc:id="199e842e-90c1-4666-85a0-8a8cebccf055" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+vars.i]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Entering into for each" doc:id="8e145025-b942-4709-8a42-0a3173be41b0" message='#["Entering into for each"]'/>
+		<foreach doc:name="Splitting payload" doc:id="085ec5c9-b1c1-4935-9f1e-6bbcd6e084ae" collection='#[payload splitBy (",")]' >
+			<http:request method="GET" doc:name="Request_filter_url" doc:id="c8f4fa47-0354-449b-b546-f46d34817b7f" url="${req.filterurl}" responseTimeout="#[80000000000000000000000]" >
+				<http:query-params ><![CDATA[#[{
+	"i" : payload
+}]]]></http:query-params>
+			</http:request>
+			<ee:transform doc:name="Seperate_iddrinks_from_payload" doc:id="dfc12b52-473c-4614-a910-9daf7b6d4689" >
+				<ee:message />
+				<ee:variables >
+					<ee:set-variable variableName="iddrinks" ><![CDATA[%dw 2.0
+output application/json
+---
+payload.drinks map
+{
+	"idDrinks" : $."idDrink"
+}]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+			<ee:transform doc:name="Seperate_ids_from_payload" doc:id="d65c3b53-cb80-4095-9bfa-7dcd68d423d8" >
+				<ee:message />
+				<ee:variables >
+					<ee:set-variable variableName="id" ><![CDATA[%dw 2.0
+output application/json
+---
+vars.iddrinks.idDrinks]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+			<ee:transform doc:name="Gettings ids" doc:id="d42120fc-6e91-4eec-8510-6ef28ca74cdc" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+vars.id]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+			<ee:transform doc:name="appending payload with empty array" doc:id="137469f4-0962-4db7-a842-14c91c46a0a4" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+				</ee:message>
+				<ee:variables >
+					<ee:set-variable variableName="array1" ><![CDATA[%dw 2.0
+output application/json
+---
+vars.array1 ++ payload]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+		</foreach>
+		<ee:transform doc:name="payload of for each" doc:id="7fedc81b-9813-4c65-8cf3-9243fdf36838" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+vars.array1]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<flow-ref doc:name="Calling sub flow" doc:id="52bf9f65-e828-46ab-9b48-269e301cd581" name="Look_up_url_details" />
+		<logger level="INFO" doc:name='"Main flow Ended"' doc:id="acc2c74a-3f02-4c56-948b-190566be9c42" message='#["Main flow Ended"]'/>
+	</flow>
+	<flow name="Look_up_url_details" doc:id="c798b7fc-1e09-4f5f-8d69-6aaf7c6bb1a7" initialState="started" >
+		<ee:transform doc:name="Create empty array" doc:id="c8a472fc-ecd4-4427-afcd-5aea346d35f5" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+vars.array1]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="array" ><![CDATA[%dw 2.0
+output application/json
+---
+[]]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+		<logger level="INFO" doc:name="Entering into for each" doc:id="a84afc23-1b8f-4d3e-bb48-f2cdd9c42ae3" message='#["Entering into for each"]'/>
+		<foreach doc:name="Reading ids " doc:id="c12351d9-3a52-41d8-9def-74eedbbbd7d8" collection="#[payload]" >
+			<http:request method="GET" doc:name="Request look up url" doc:id="e6dd18f8-092d-4d56-aef7-a2b1129b8623" url="${req.idurl}" >
+				<http:query-params ><![CDATA[#[{
+	"i" : payload
+}]]]></http:query-params>
+			</http:request>
+			<ee:transform doc:name="payload of request" doc:id="e5aa11b1-101d-4e5d-b36a-666a7f9eda03" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload
+]]></ee:set-payload>
+				</ee:message>
+				<ee:variables />
+			</ee:transform>
+			<ee:transform doc:name="Filtering cocktail details" doc:id="abf2ac4f-aa5e-4c4f-8ca1-0a945693f9fa" >
+				<ee:message />
+				<ee:variables >
+					<ee:set-variable variableName="cocktail" ><![CDATA[%dw 2.0
+output application/json
+---
+payload.drinks filter (($."strIngredient1" == vars.ing1) or ($."strIngredient1" == vars.ing2) or ($."strIngredient2" == vars.ing1 or $."strIngredient2" == vars.ing2) or ($."strIngredient3" == vars.ing1 or $."strIngredient3" == vars.ing2) 
+ or ($."strIngredient4" == vars.ing1 or $."strIngredient4" == vars.ing2) or ($."strIngredient5" == vars.ing1 or $."strIngredient5" == vars.ing2))]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+			<ee:transform doc:name="Getting missing ingerdients details" doc:id="55d1fe63-c7db-4e78-9c44-d627d87bfb87" >
+				<ee:message />
+				<ee:variables >
+					<ee:set-variable variableName="finialing" ><![CDATA[%dw 2.0
+output application/json
+---
+vars.cocktail map (
+    if (($."strIngredient1" == vars.ing1) or ($."strIngredient1" == vars.ing2)) [$."strIngredient2",$."strIngredient3",$."strIngredient4",$."strIngredient5"] else if (($."strIngredient2" == vars.ing1) or ($."strIngredient2" == vars.ing2)) [$."strIngredient1",$."strIngredient3",$."strIngredient4",$."strIngredient5"] else if (($."strIngredient3" == vars.ing1) or ($."strIngredient3" == vars.ing2)) [$."strIngredient1",$."strIngredient2",$."strIngredient4",$."strIngredient5"] else if (($."strIngredient4" == vars.ing1) or ($."strIngredient4" == vars.ing2)) [$."strIngredient1",$."strIngredient3",$."strIngredient2",$."strIngredient5"] else if (($."strIngredient5" == vars.ing1) or ($."strIngredient5" == vars.ing2)) [$."strIngredient1",$."strIngredient3",$."strIngredient4",$."strIngredient2"] else "no")
+]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+			<ee:transform doc:name="Mapping payload" doc:id="a3f12b81-f16c-4cef-888f-837bc7857126" >
+				<ee:message >
+					<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+vars.cocktail map
+{
+	"cocktail" : $.strDrink,
+    "missing Ingredients" : vars.finialing[0],
+    "instructions" : $.strInstructions,
+     "ingredients" : [
+    {
+        "name" : $.strIngredient1,
+        "measure" : $.strMeasure1       
+    },
+    {
+    "name" : $.strIngredient2,
+        "measure" : $.strMeasure2
+     },
+     {
+         "name" : $.strIngredient3,
+        "measure" : $.strMeasure3
+     },
+     {
+        "name" : $.strIngredient4,
+        "measure" : $.strMeasure4
+     }
+    ]
+    }
+]]></ee:set-payload>
+				</ee:message>
+			</ee:transform>
+			<ee:transform doc:name="appending payload with empty array" doc:id="dfa72f0c-e3fa-417f-93f9-86cd6a63b476" >
+				<ee:message />
+				<ee:variables >
+					<ee:set-variable variableName="array" ><![CDATA[%dw 2.0
+output application/json
+---
+vars.array ++ payload]]></ee:set-variable>
+				</ee:variables>
+			</ee:transform>
+		</foreach>
+		<ee:transform doc:name="Output payload" doc:id="7ab6e62f-52f2-4406-ad1d-939eab956228" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+vars.array]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name='"Subflow ended"' doc:id="8b3a87a3-5e31-44fb-9bf8-b4a8deb6da3b" message='#["Subflow ended"]'/>
+	</flow>
+</mule>

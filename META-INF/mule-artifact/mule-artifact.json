@@ -1,0 +1,41 @@
+{
+  "configs": [
+    "cocktail_main.xml",
+    "cocktail_api.xml",
+    "global_configuration.xml",
+    "global_error_handling.xml"
+  ],
+  "secureProperties": [],
+  "redeploymentEnabled": true,
+  "name": "com.mycompany:cocktailpoc:1.0.0-SNAPSHOT",
+  "minMuleVersion": "4.3.0",
+  "requiredProduct": "MULE_EE",
+  "classLoaderModelLoaderDescriptor": {
+    "id": "mule",
+    "attributes": {
+      "exportedPackages": [],
+      "exportedResources": [
+        "api/cocktail_api.raml",
+        "api/examples/codes.raml",
+        "api/examples/error/400.json",
+        "api/examples/error/401.json",
+        "api/examples/error/404.json",
+        "api/examples/error/500.json",
+        "api/examples/success/200.json",
+        "api/examples/success/201.json",
+        "api/examples/success/203.json",
+        "api/examples/trait.raml",
+        "cocktail_api.xml",
+        "cocktail_main.xml",
+        "dev_app.properties",
+        "global_configuration.xml",
+        "global_error_handling.xml",
+        "log4j2.xml"
+      ]
+    }
+  },
+  "bundleDescriptorLoader": {
+    "id": "mule",
+    "attributes": {}
+  }
+}

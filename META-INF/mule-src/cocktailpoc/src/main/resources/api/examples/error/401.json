@@ -1,0 +1,5 @@
+{
+  "ErrorDescription" : "Accessing unauthorized resource",
+  "ErrorType": "Unauthorized",
+  "ErrorCode" : 401
+}
